@@ -12,11 +12,11 @@ import outputTemplate
 
 def logHandler(wfJSON):
     curr_timestamp = datetime.datetime.now().strftime("%Y%m%d_%I%M%s")
-    logname = 'workFlowLog' +curr_timestamp +'.log'
+    logname = wfJSON['LOG_LOCATION']+'_' +curr_timestamp +'.log'
     logger =logging.getLogger()
     logger = logging.getLogger("workFlowLog")
     logger.setLevel(logging.INFO)
-    fh = logging.FileHandler('/Users/tamalsarkar/IdeaProjects/config_param/log/' + logname)
+    fh = logging.FileHandler(logname)
     formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
     fh.setFormatter(formatter)
     logger.addHandler(fh)

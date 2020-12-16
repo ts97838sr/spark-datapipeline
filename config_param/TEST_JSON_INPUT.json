@@ -1,7 +1,7 @@
 {
    "TASK_PROJECT":"TEST_JSON_INPUT",
    "WF_STATUS":"A",
-   "LOG_LOCATION": "/Users/tamalsarkar/IdeaProjects/config_param/log/TEST_JSON_INPUT.log",
+   "LOG_LOCATION": "/Users/tamalsarkar/IdeaProjects/spark-datapipeline/config_param/log/TEST_JSON_INPUT",
    "TASK_NAME":[
       {
          "TASK_NAME":"INPUT_DF",
@@ -9,7 +9,7 @@
          "TASK_VALUE":{
             "TYPE":"csv",
             "PARAM":[
-               "path:/Users/tamalsarkar/IdeaProjects/config_param/input.csv"
+               "path:/Users/tamalsarkar/IdeaProjects/spark-datapipeline/config_param/input.csv"
             ]
          },
          "START_TS":"CURRENT_TIMESTAMP",
@@ -46,7 +46,7 @@
             "TYPE":"csv",
             "INPUT":"TRANSFORM_DF2",
             "PARAM":[
-               "path:/Users/tamalsarkar/IdeaProjects/config_param/output.csv"
+               "path:/Users/tamalsarkar/IdeaProjects/spark-datapipeline/output.csv"
             ]
          },
          "START_TS":"CURRENT_TIMESTAMP",
