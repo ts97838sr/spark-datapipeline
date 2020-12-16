@@ -1,0 +1,25 @@
+2020-12-16 16:03:39,689 INFO Started parsing input workflow
+2020-12-16 16:03:39,689 INFO Current Step {'TASK_NAME': 'INPUT_DF', 'TASK_KEY': 'input', 'TASK_VALUE': {'TYPE': 'csv', 'PARAM': ['path:/Users/tamalsarkar/IdeaProjects/config_param/input.csv']}, 'START_TS': 'CURRENT_TIMESTAMP', 'UPDATED_BY': 'TAMAL'}
+2020-12-16 16:03:39,689 INFO Input File Path :/Users/tamalsarkar/IdeaProjects/config_param/input.csv
+2020-12-16 16:03:45,655 INFO Successfully registered :/Users/tamalsarkar/IdeaProjects/config_param/input.csv as a Temp Table
+2020-12-16 16:03:45,655 INFO ===========================================================
+2020-12-16 16:03:45,655 INFO Current Step {'TASK_NAME': 'TRANSFORM_DF1', 'TASK_KEY': 'transform', 'TASK_VALUE': {'TYPE': 'sql', 'PARAM': ['SELECT firstname,lastname,address from INPUT_DF where id in (1,2,3)']}, 'START_TS': 'CURRENT_TIMESTAMP', 'UPDATED_BY': 'TAMAL'}
+2020-12-16 16:03:45,655 INFO Transformation : SELECT firstname,lastname,address from INPUT_DF where id in (1,2,3)
+2020-12-16 16:03:45,655 INFO Dataframe Name : TRANSFORM_DF1
+2020-12-16 16:03:45,742 INFO Transformation Step Successful .Processing next step to register as Temp Table
+2020-12-16 16:03:45,742 INFO Registering Temp Table:  TRANSFORM_DF1
+2020-12-16 16:03:45,763 INFO Successfully Registered temp Table
+2020-12-16 16:03:45,763 INFO ===========================================================
+2020-12-16 16:03:45,763 INFO Current Step {'TASK_NAME': 'TRANSFORM_DF2', 'TASK_KEY': 'transform', 'TASK_VALUE': {'TYPE': 'sql', 'PARAM': ['SELECT count(1) as count_by_firstname,firstname from TRANSFORM_DF1 group by firstname']}, 'START_TS': 'CURRENT_TIMESTAMP', 'UPDATED_BY': 'TAMAL'}
+2020-12-16 16:03:45,763 INFO Transformation : SELECT count(1) as count_by_firstname,firstname from TRANSFORM_DF1 group by firstname
+2020-12-16 16:03:45,763 INFO Dataframe Name : TRANSFORM_DF2
+2020-12-16 16:03:45,815 INFO Transformation Step Successful .Processing next step to register as Temp Table
+2020-12-16 16:03:45,815 INFO Registering Temp Table:  TRANSFORM_DF2
+2020-12-16 16:03:45,835 INFO Successfully Registered temp Table
+2020-12-16 16:03:45,835 INFO ===========================================================
+2020-12-16 16:03:45,836 INFO Current Step {'TASK_NAME': 'OUTPUT_DF', 'TASK_KEY': 'output', 'TASK_VALUE': {'TYPE': 'csv', 'INPUT': 'TRANSFORM_DF2', 'PARAM': ['path:/Users/tamalsarkar/IdeaProjects/config_param/output.csv']}, 'START_TS': 'CURRENT_TIMESTAMP', 'UPDATED_BY': 'TAMAL'}
+2020-12-16 16:03:45,836 INFO Output File Path :/Users/tamalsarkar/IdeaProjects/config_param/output.csv
+2020-12-16 16:03:45,836 INFO Output FileType: csv
+2020-12-16 16:03:45,836 INFO File to be writen: TRANSFORM_DF2
+2020-12-16 16:03:50,098 INFO Output has been writen to /Users/tamalsarkar/IdeaProjects/config_param/output.csv
+2020-12-16 16:03:50,099 INFO ===========================================================

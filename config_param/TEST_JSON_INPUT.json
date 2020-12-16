@@ -1,0 +1,56 @@
+{
+   "TASK_PROJECT":"TEST_JSON_INPUT",
+   "WF_STATUS":"A",
+   "LOG_LOCATION": "/Users/tamalsarkar/IdeaProjects/config_param/log/TEST_JSON_INPUT.log",
+   "TASK_NAME":[
+      {
+         "TASK_NAME":"INPUT_DF",
+         "TASK_KEY":"input",
+         "TASK_VALUE":{
+            "TYPE":"csv",
+            "PARAM":[
+               "path:/Users/tamalsarkar/IdeaProjects/config_param/input.csv"
+            ]
+         },
+         "START_TS":"CURRENT_TIMESTAMP",
+         "UPDATED_BY":"TAMAL"
+      },
+      {
+         "TASK_NAME":"TRANSFORM_DF1",
+         "TASK_KEY":"transform",
+         "TASK_VALUE":{
+            "TYPE":"sql",
+            "PARAM":[
+               "SELECT firstname,lastname,address from INPUT_DF where id in (1,2,3)"
+            ]
+         },
+         "START_TS":"CURRENT_TIMESTAMP",
+         "UPDATED_BY":"TAMAL"
+      },
+      {
+         "TASK_NAME":"TRANSFORM_DF2",
+         "TASK_KEY":"transform",
+         "TASK_VALUE":{
+            "TYPE":"sql",
+            "PARAM":[
+               "SELECT count(1) as count_by_firstname,firstname from TRANSFORM_DF1 group by firstname"
+            ]
+         },
+         "START_TS":"CURRENT_TIMESTAMP",
+         "UPDATED_BY":"TAMAL"
+      },
+      {
+         "TASK_NAME":"OUTPUT_DF",
+         "TASK_KEY":"output",
+         "TASK_VALUE":{
+            "TYPE":"csv",
+            "INPUT":"TRANSFORM_DF2",
+            "PARAM":[
+               "path:/Users/tamalsarkar/IdeaProjects/config_param/output.csv"
+            ]
+         },
+         "START_TS":"CURRENT_TIMESTAMP",
+         "UPDATED_BY":"TAMAL"
+      }
+   ]
+}
