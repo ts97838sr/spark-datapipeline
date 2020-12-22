@@ -1,15 +1,19 @@
 {
    "TASK_PROJECT":"TEST_JSON_INPUT",
    "WF_STATUS":"A",
-   "LOG_LOCATION": "/Users/tamalsarkar/IdeaProjects/spark-datapipeline/config_param/log/TEST_JSON_INPUT",
+   "LOG_LOCATION":"/Users/tamalsarkar/IdeaProjects/spark-datapipeline/config_param/log/TEST_JSON_INPUT",
    "TASK_NAME":[
       {
          "TASK_NAME":"INPUT_DF",
-         "TASK_KEY":"input",
+         "TASK_KEY":"FileRead",
+         "TASK_CATEGORY":"input",
          "TASK_VALUE":{
             "TYPE":"csv",
             "PARAM":[
-               "path:/Users/tamalsarkar/IdeaProjects/spark-datapipeline/config_param/input.csv"
+               {"Key": "path", "value":"/Users/tamalsarkar/IdeaProjects/spark-datapipeline/config_param/input.csv"
+               },
+               {"Key": "Separator", "value":","
+               }
             ]
          },
          "START_TS":"CURRENT_TIMESTAMP",
@@ -17,7 +21,8 @@
       },
       {
          "TASK_NAME":"TRANSFORM_DF1",
-         "TASK_KEY":"transform",
+         "TASK_CATEGORY":"transform",
+         "TASK_KEY":"DataTransform",
          "TASK_VALUE":{
             "TYPE":"sql",
             "PARAM":[
@@ -29,7 +34,8 @@
       },
       {
          "TASK_NAME":"TRANSFORM_DF2",
-         "TASK_KEY":"transform",
+         "TASK_CATEGORY":"transform",
+         "TASK_KEY":"DataTransform",
          "TASK_VALUE":{
             "TYPE":"sql",
             "PARAM":[
@@ -41,12 +47,16 @@
       },
       {
          "TASK_NAME":"OUTPUT_DF",
-         "TASK_KEY":"output",
+         "TASK_CATEGORY":"output",
+         "TASK_KEY":"FileWrite",
          "TASK_VALUE":{
             "TYPE":"csv",
             "INPUT":"TRANSFORM_DF2",
             "PARAM":[
-               "path:/Users/tamalsarkar/IdeaProjects/spark-datapipeline/output.csv"
+               {"Key": "path", "value":"/Users/tamalsarkar/IdeaProjects/spark-datapipeline/output.csv"
+               },
+               {"Key": "header", "value":"True"
+               }
             ]
          },
          "START_TS":"CURRENT_TIMESTAMP",
