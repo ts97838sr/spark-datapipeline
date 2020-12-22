@@ -86,7 +86,7 @@ def readJson(wfJSON):
                 logger.info(f'{outfilePath[0]["Key"]} : {outfilePath[0]["value"]} ')
                 logger.info(f'{outfilePath[1]["Key"]} : {outfilePath[1]["value"]} ')
                 try:
-                    outputTemplate.write_file(outfilePath,outputType,inputDS)
+                    outputTemplate.write_file(outfilePath,outputType,dF2)
                 except Exception as e:
                     logger.error(e)
                     exit(4)
