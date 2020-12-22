@@ -1,6 +1,6 @@
 from pyspark.sql import SparkSession
 
-spark = SparkSession.builder.appName('WorkflowApp').getOrCreate()
+spark = SparkSession.builder.getOrCreate()
 
 
 def write_file(paramList,dfType,dfName):

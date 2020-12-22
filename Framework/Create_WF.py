@@ -115,7 +115,7 @@ def main():
         logger.info('Successfully Completed Workflow. Please refer to log file for additional details')
 
 if __name__ == "__main__":
-    sc = SparkContext.getOrCreate(conf=SparkConf())
+    sc = SparkContext.getOrCreate(SparkConf())
     spark = SQLContext(sc)
     try:
         with open(sys.argv[1]) as inputJson:

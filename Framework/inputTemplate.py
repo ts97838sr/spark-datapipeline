@@ -1,7 +1,7 @@
 from pyspark.sql import SparkSession
 import os
 
-spark = SparkSession.builder.appName('WorkflowApp').getOrCreate()
+spark = SparkSession.builder.getOrCreate()
 
 def read_file(paramList,fileType):
     """
