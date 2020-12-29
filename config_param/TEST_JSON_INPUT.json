@@ -1,7 +1,7 @@
 {
    "TASK_PROJECT":"TEST_JSON_INPUT",
    "WF_STATUS":"A",
-   "LOG_LOCATION":"/Users/tamalsarkar/IdeaProjects/spark-datapipeline/config_param/log/TEST_JSON_INPUT",
+   "LOG_LOCATION":"/Users/tamalsarkar/IdeaProjects/spark-datapipeline/config_param/log/TEST_JSON_INPUT.log",
    "TASK_NAME":[
       {
          "TASK_NAME":"INPUT_DF",
