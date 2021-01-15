@@ -1,7 +1,7 @@
 {
    "TASK_PROJECT":"TEST_JSON_INPUT",
    "WF_STATUS":"A",
-   "LOG_LOCATION":"/Users/tamalsarkar/IdeaProjects/spark-datapipeline/config_param/log/TEST_JSON_INPUT",
+   "LOG_LOCATION":"/Users/tamalsarkar/IdeaProjects/spark-datapipeline/config_param/log/TEST_JSON_INPUT.log",
    "TASK_NAME":[
       {
          "TASK_NAME":"INPUT_DF",
@@ -10,9 +10,30 @@
          "TASK_VALUE":{
             "TYPE":"csv",
             "PARAM":[
-               {"Key": "path", "value":"/Users/tamalsarkar/IdeaProjects/spark-datapipeline/config_param/input.csv"
+               {
+                  "Key":"path",
+                  "value":"/Users/tamalsarkar/IdeaProjects/spark-datapipeline/config_param/input.csv"
                },
-               {"Key": "Separator", "value":","
+               {
+                  "Key":"Separator",
+                  "value":","
+               }
+            ]
+         },
+         "START_TS":"CURRENT_TIMESTAMP",
+         "UPDATED_BY":"TAMAL"
+      },
+      {
+         "TASK_NAME":"TABLE_DF",
+         "TASK_KEY":"TableUnload",
+         "TASK_CATEGORY":"DataBase",
+         "TASK_VALUE":{
+            "TYPE":"postgresql",
+            "CONFIG_LOC":"/Users/tamalsarkar/IdeaProjects/spark-datapipeline/config_param/configDir/wfConfig.ini",
+            "PARAM":[
+               {
+                  "Key":"query",
+                  "value":"users"
                }
             ]
          },
@@ -26,7 +47,7 @@
          "TASK_VALUE":{
             "TYPE":"sql",
             "PARAM":[
-               "SELECT firstname,lastname,address from INPUT_DF where id in (1,2,3)"
+               "SELECT id,firstname,lastname,address from INPUT_DF where id in (1,2,3)"
             ]
          },
          "START_TS":"CURRENT_TIMESTAMP",
@@ -39,7 +60,7 @@
          "TASK_VALUE":{
             "TYPE":"sql",
             "PARAM":[
-               "SELECT count(1) as count_by_firstname,firstname from TRANSFORM_DF1 group by firstname"
+               "SELECT TRANSFORM_DF1.firstname,TRANSFORM_DF1.lastname,TABLE_DF.name,TABLE_DF.email,TABLE_DF.address from TRANSFORM_DF1 INNER JOIN TABLE_DF ON TRANSFORM_DF1.id=TABLE_DF.id"
             ]
          },
          "START_TS":"CURRENT_TIMESTAMP",
@@ -53,9 +74,13 @@
             "TYPE":"csv",
             "INPUT":"TRANSFORM_DF2",
             "PARAM":[
-               {"Key": "path", "value":"/Users/tamalsarkar/IdeaProjects/spark-datapipeline/output.csv"
+               {
+                  "Key":"path",
+                  "value":"/Users/tamalsarkar/IdeaProjects/spark-datapipeline/output.csv"
                },
-               {"Key": "header", "value":"True"
+               {
+                  "Key":"header",
+                  "value":"True"
                }
             ]
          },

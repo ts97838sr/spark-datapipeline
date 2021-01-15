@@ -3,15 +3,18 @@ Data pipeline built on spark ,leveraging PySpark for frame-work and spark sql fo
 
 Initial Rollout :
 
-SUPPORTED INPUT FORMAT:
+#SUPPORTED INPUT FORMAT:
 CSV/PARQUET/JSON
 CSV : Default encoding utf-8,Header=True,InferSchema=True
 PARQUET : DEAFULT PARAMS
 
-SUPPORTED TRANSFORMATION :
+#SUPPORTED DB:
+POSTGRES DB UNLOAD(FULL TABLE UNLOAD AS OF NOW ..)- WIP
+
+#SUPPORTED TRANSFORMATION :
 SPARK SQL
 
-SUPPORTED WRITE FORMAT :
+#SUPPORTED WRITE FORMAT :
 CSV/PARQUET/JSON
 
 CSV files are being writen in overwrite mode with Header.
@@ -25,18 +28,47 @@ USER INPUT is accepted in form of a json, where the user will provide the input 
 
 JSON Template
 {
-    "TASK_NAME":"INPUT_DF",
-    "TASK_KEY":"input",
-    "TASK_VALUE":{
-    "TYPE":"csv",
-    "PARAM":[
-    "path:<Fully qualified input file>"
-    ]
-    },
-    "START_TS":"CURRENT_TIMESTAMP",
-    "UPDATED_BY":"USER"
-}
+"TASK_NAME":"INPUT_DF",
+"TASK_KEY":"FileRead",
+"TASK_CATEGORY":"input",
+"TASK_VALUE":{
+"TYPE":"csv",
+"PARAM":[
+        {
+        "Key":"path",
+        "value":"Fully qualified input file path"
+        },
+        {
+        "Key":"Separator",
+        "value":","
+        }
+        ]
+},
+"START_TS":"CURRENT_TIMESTAMP",
+"UPDATED_BY":"TAMAL"
+},
 Set of spark sql steps executed on the input files.The sql's will be directly provided in json and will be executed in the order in which received in the json file.
+
+JSON Template
+
+{
+"TASK_NAME":"TABLE_DF",
+"TASK_KEY":"TableUnload",
+"TASK_CATEGORY":"DataBase",
+"TASK_VALUE":{
+"TYPE":"postgresql",
+"CONFIG_LOC":"wfConfig.ini",
+"PARAM":[
+        {
+        "Key":"query",
+        "value":"users"
+        }
+        ]
+    },
+"START_TS":"CURRENT_TIMESTAMP",
+"UPDATED_BY":"USER"
+
+FULL TABLE UNLOAD
 
 JSON Template
 
@@ -58,15 +90,34 @@ The final step is writing in csv and parquet file using the dataframe to be writ
 JSON Template
 
 {
-    "TASK_NAME":"OUTPUT_DF",
-    "TASK_KEY":"output",
-    "TASK_VALUE":{
-    "TYPE":"csv",
-    "INPUT":"TRANSFORM_DF2",
-    "PARAM":[
-    "path:<Fully qualified output file>"
-    ]
-    },
-    "START_TS":"CURRENT_TIMESTAMP",
-    "UPDATED_BY":"USER"
+"TASK_NAME":"OUTPUT_DF",
+"TASK_CATEGORY":"output",
+"TASK_KEY":"FileWrite",
+"TASK_VALUE":{
+"TYPE":"csv",
+"INPUT":"TRANSFORM_DF2",
+"PARAM":[
+        {
+        "Key":"path",
+        "value":"Fully qualified output path"
+        },
+        {
+        "Key":"header",
+        "value":"True"
+        }
+        ]
+},
+"START_TS":"CURRENT_TIMESTAMP",
+"UPDATED_BY":"TAMAL"
 }
+
+
+#Command line Trigger :
+
+spark-submit --driver-class-path /JarDownload/postgresql-42.2.18.jar  <Path of main entry point>/Create_WF.py <Path of config>/config_param/TEST_JSON_INPUT.json
+
+Jar to be downloaded and placed in a directory to which this needs to be pointed
+
+##In case database feature is not being used in workflow, --driver-class-path is not required .
+
+--driver-class-path /JarDownload/postgresql-42.2.18.jar
