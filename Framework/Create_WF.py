@@ -1,7 +1,4 @@
-import datetime
-import json
-import logging
-import sys
+import datetime,json,sys
 
 from pyspark import SparkConf,SparkContext
 from pyspark.sql import SQLContext
@@ -9,6 +6,7 @@ from pyspark.sql import SQLContext
 import inputTemplate
 import outputTemplate
 import logHandler
+import pgDbUtil
 
 def readJson(wfJSON):
     """
@@ -38,6 +36,20 @@ def readJson(wfJSON):
                     stepVal['TASK_NAME']=dF1.createOrReplaceTempView(stepVal['TASK_NAME'])
                     logger.info(f'Successfully registered :{filePath} as a Temp Table')
                     logger.info("===========================================================")
+            elif stepVal['TASK_CATEGORY'] == 'DataBase':
+                configLoc=stepVal['TASK_VALUE']['CONFIG_LOC']
+                dbType=stepVal['TASK_VALUE']['TYPE']
+                queryOp=stepVal['TASK_VALUE']['PARAM']
+                logger.info(f'DataBase Type :{dbType} and config file is {configLoc}')
+                logger.info(f"Query : {queryOp[0]['value']}")
+                logger.info("===========================================================")
+                try:
+                    dF3=pgDbUtil.tableUnload(configLoc,dbType,queryOp)
+                except Exception as e :
+                    logger.error(e)
+                    exit (4)
+                else:
+                    stepVal['TASK_NAME']=dF3.createOrReplaceTempView(stepVal['TASK_NAME'])
             elif stepVal['TASK_CATEGORY'] == 'transform':
                 transformOp = stepVal['TASK_VALUE']['PARAM'][0]
                 logger.info(f'Transformation : {transformOp}')
@@ -56,7 +68,6 @@ def readJson(wfJSON):
                     logger.error(e)
                     exit(3)
                 else:
-
                     logger.info(f'Successfully Registered temp Table')
                     logger.info("===========================================================")
             elif stepVal['TASK_CATEGORY'] == 'output':
