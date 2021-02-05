@@ -30,9 +30,30 @@ def tableUnload(configLoc,dbType,queryOp):
     db_properties['password']=db_prop['password']
     db_properties['url']= db_prop['url']
     db_properties['driver']=db_prop['driver']
-    #Read the table contents to a spark dataframe
-    #df_select = spark.read.jdbc(url=db_url,table=queryOp[0]['value'],properties=db_properties)
 
     df_select = spark.read.format('jdbc').options(url = db_url,dbtable=queryOp[0]['value'],properties=db_properties).load()
 
     return df_select
+
+def tableLoad(configLoc,dbType,jdbcDF):
+    """
+    :param configLoc:
+    :param dbType:
+    :return:
+    """
+    db_properties={}
+    db_prop=dbConfigReader(configLoc,dbType)
+
+    db_url = db_prop['url']
+    db_properties['username']=db_prop['username']
+    db_properties['password']=db_prop['password']
+    db_properties['url']= db_prop['url']
+    db_properties['driver']=db_prop['driver']
+    try:
+        jdbcDF.write.format("jdbc").options(url = db_url,table=jdbcDF,mode='append',properties=db_properties).save()
+    except Exception as e:
+        print(e)
+        exit(12)
+    else:
+        return 0
+
