@@ -106,7 +106,7 @@
             "PARAM":[
                {
                   "Key":"path",
-                  "value":"/Users/tamalsarkar/IdeaProjects/spark-datapipeline/output.csv"
+                  "value":"/Users/tamalsarkar/IdeaProjects/spark-datapipeline/output"
                },
                {
                   "Key":"header",

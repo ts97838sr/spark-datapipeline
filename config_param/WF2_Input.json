@@ -1,0 +1,65 @@
+{
+  "TASK_PROJECT": "WF2_Input",
+  "WF_STATUS": "A",
+  "LOG_LOCATION": "/Users/tamalsarkar/IdeaProjects/spark-datapipeline/config_param/log/WF2_Input.log",
+  "TASK_NAME": [
+    {
+      "TASK_NAME": "fixedLengthFile",
+      "TASK_KEY": "FileRead",
+      "TASK_CATEGORY": "input",
+      "TASK_VALUE": {
+        "TYPE": "fixed",
+        "PARAM": [
+          {
+            "Key": "path",
+            "value": "/Users/tamalsarkar/IdeaProjects/spark-datapipeline/config_param/fixedLengthFile.dat"
+          },
+          {
+            "Key": "ColumnSpecification",
+            "value": "(0,3),(4,11),(11,21),(21,31),(31,34),(34,62),(62,74)"
+          },
+          {
+            "Key": "columnName",
+            "value":"RECID,DATE,FIRSTNAME,LASTNAME,AGE,EMAIL,JOB"
+          }
+        ]
+      },
+      "START_TS": "CURRENT_TIMESTAMP",
+      "UPDATED_BY": "TAMAL"
+    },
+    {
+      "TASK_NAME": "TRANSFORM_DF1",
+      "TASK_CATEGORY": "transform",
+      "TASK_KEY": "DataTransform",
+      "TASK_VALUE": {
+        "TYPE": "sql",
+        "PARAM": [
+          "SELECT FIRSTNAME,LASTNAME,EMAIL,JOB from fixedLengthFile where AGE>30"
+        ]
+      },
+      "START_TS": "CURRENT_TIMESTAMP",
+      "UPDATED_BY": "TAMAL"
+    },
+    {
+      "TASK_NAME": "OUTPUT_DF",
+      "TASK_CATEGORY": "output",
+      "TASK_KEY": "FileWrite",
+      "TASK_VALUE": {
+        "TYPE": "csv",
+        "INPUT": "TRANSFORM_DF1",
+        "PARAM": [
+          {
+            "Key": "path",
+            "value": "/Users/tamalsarkar/IdeaProjects/spark-datapipeline/WF2_output"
+          },
+          {
+            "Key": "header",
+            "value": "True"
+          }
+        ]
+      },
+      "START_TS": "CURRENT_TIMESTAMP",
+      "UPDATED_BY": "TAMAL"
+    }
+  ]
+}
