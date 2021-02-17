@@ -27,7 +27,6 @@ def read_file(paramList,fileType):
                 exit(110)
             else:
                 col_spec=list(ast.literal_eval(paramList[1]['value']))
-                print(col_spec)
 
             try:
                 paramList[2]['Key'] == "columnName"
@@ -36,7 +35,6 @@ def read_file(paramList,fileType):
                 print("Custom column names not provided")
             else:
                 columnName = paramList[2]['value'].split(",")
-                print(columnName)
                 data=pd.read_fwf(paramList[0]['value'],colspecs=col_spec,header=None,names=columnName)
                 df = spark.createDataFrame(data.astype(str))
 
