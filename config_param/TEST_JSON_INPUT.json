@@ -64,7 +64,14 @@
          "TASK_VALUE":{
             "TYPE":"sql",
             "PARAM":[
-               "SELECT id,firstname,lastname,address from INPUT_DF where id in (1,2,3)"
+               {
+                  "Key": "query",
+                  "Value":"SELECT id,firstname,lastname,address from INPUT_DF where id in (1,2,3)"
+               },
+               {
+                  "Key": "Cache",
+                  "Value":"True"
+               }
             ]
          },
          "START_TS":"CURRENT_TIMESTAMP",
@@ -77,7 +84,14 @@
          "TASK_VALUE":{
             "TYPE":"sql",
             "PARAM":[
-               "SELECT TRANSFORM_DF1.firstname,TRANSFORM_DF1.lastname,TABLE_DF.name,TABLE_DF.email,TABLE_DF.address from TRANSFORM_DF1 INNER JOIN TABLE_DF ON TRANSFORM_DF1.id=TABLE_DF.id"
+               {
+                  "Key": "query",
+                  "Value":"SELECT TRANSFORM_DF1.firstname,TRANSFORM_DF1.lastname,TABLE_DF.name,TABLE_DF.email,TABLE_DF.address from TRANSFORM_DF1 INNER JOIN TABLE_DF ON TRANSFORM_DF1.id=TABLE_DF.id"
+               },
+               {
+                  "Key": "Cache",
+                  "Value":"False"
+               }
             ]
          },
          "START_TS":"CURRENT_TIMESTAMP",
@@ -90,7 +104,14 @@
          "TASK_VALUE":{
             "TYPE":"sql",
             "PARAM":[
-               "SELECT TRANSFORM_DF2.firstname,TRANSFORM_DF2.lastname,ACCOUNT_DF.name,ACCOUNT_DF.balance,TRANSFORM_DF2.email,TRANSFORM_DF2.address from TRANSFORM_DF2 INNER JOIN ACCOUNT_DF ON TRANSFORM_DF2.name=ACCOUNT_DF.name"
+               {
+                  "Key": "query",
+                  "Value":"SELECT TRANSFORM_DF2.firstname,TRANSFORM_DF2.lastname,ACCOUNT_DF.name,ACCOUNT_DF.balance,TRANSFORM_DF2.email,TRANSFORM_DF2.address from TRANSFORM_DF2 INNER JOIN ACCOUNT_DF ON TRANSFORM_DF2.name=ACCOUNT_DF.name"
+               },
+               {
+                  "Key": "Cache",
+                  "Value":"False"
+               }
             ]
          },
          "START_TS":"CURRENT_TIMESTAMP",
@@ -111,6 +132,10 @@
                {
                   "Key":"header",
                   "value":"True"
+               },
+               {
+                  "Key":"repartition",
+                  "value":1
                }
             ]
          },

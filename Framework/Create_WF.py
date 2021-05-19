@@ -65,25 +65,34 @@ def readJson(wfJSON):
                 else:
                     logger.info(f"Successfully Writen to table : {queryOp[0]['value']}")
             elif stepVal['TASK_CATEGORY'] == 'transform':
-                transformOp = stepVal['TASK_VALUE']['PARAM'][0]
-                logger.info(f'Transformation : {transformOp}')
-                try:
-                    logger.info(f'Dataframe Name : {stepVal["TASK_NAME"]}')
-                    dF2=spark.sql(transformOp)
-                except Exception as e:
-                    logger.error(f'SQL Execution Failed for {transformOp} with {e}')
-                    exit(2)
+                transformOp = stepVal['TASK_VALUE']['PARAM']
+                if transformOp[0]['Key'] == 'query':
+                    transformOpSql=transformOp[0]['Value']
+                    logger.info(f'Transformation : {transformOpSql}')
+                    try:
+                        logger.info(f'Dataframe Name : {stepVal["TASK_NAME"]}')
+                        dF2=spark.sql(transformOpSql)
+                    except Exception as e:
+                        logger.error(f'SQL Execution Failed for {transformOp} with {e}')
+                        exit(2)
+                    else:
+                        logger.info('Transformation Step Successful .Processing next step to register as Temp Table')
+                    try:
+                        logger.info(f"Registering Temp Table:  {stepVal['TASK_NAME']}")
+                        if transformOp[1]['Key'] == 'Cache' and transformOp[1]['Value'] == 'False':
+                            stepVal['TASK_NAME']=dF2.createOrReplaceTempView(stepVal['TASK_NAME'])
+                        else:
+                            stepVal['TASK_NAME']=dF2.createOrReplaceTempView(stepVal['TASK_NAME'])
+                            spark.sql('CACHE TABLE TRANSFORM_DF1')
+                    except Exception as e:
+                        logger.error(e)
+                        exit(3)
+                    else:
+                        logger.info(f'Successfully Registered temp Table')
+                        logger.info("===========================================================")
                 else:
-                    logger.info('Transformation Step Successful .Processing next step to register as Temp Table')
-                try:
-                    logger.info(f"Registering Temp Table:  {stepVal['TASK_NAME']}")
-                    stepVal['TASK_NAME']=dF2.createOrReplaceTempView(stepVal['TASK_NAME'])
-                except Exception as e:
-                    logger.error(e)
-                    exit(3)
-                else:
-                    logger.info(f'Successfully Registered temp Table')
-                    logger.info("===========================================================")
+                    logger.info(f'Order of Param in Json is not correct. Please correct and resubmit the job')
+                    exit(400)
             elif stepVal['TASK_CATEGORY'] == 'output':
                 outfilePath = stepVal['TASK_VALUE']['PARAM']
                 outputType = stepVal['TASK_VALUE']['TYPE']

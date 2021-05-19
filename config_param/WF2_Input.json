@@ -34,7 +34,14 @@
       "TASK_VALUE": {
         "TYPE": "sql",
         "PARAM": [
-          "SELECT FIRSTNAME,LASTNAME,EMAIL,JOB from fixedLengthFile where AGE>30"
+          {
+            "Key": "query",
+            "Value":"SELECT FIRSTNAME,LASTNAME,EMAIL,JOB from fixedLengthFile where AGE>30"
+          },
+          {
+            "Key": "Cache",
+            "Value":"False"
+          }
         ]
       },
       "START_TS": "CURRENT_TIMESTAMP",
@@ -55,6 +62,10 @@
           {
             "Key": "header",
             "value": "True"
+          },
+          {
+            "Key":"coalesce",
+            "value":1
           }
         ]
       },
