@@ -1,0 +1,104 @@
+---
+TASK_PROJECT: TEST_JSON_INPUT
+WF_STATUS: A
+LOG_LOCATION: "/Users/tamalsarkar/IdeaProjects/spark-datapipeline/config_param/log/TEST_JSON_INPUT.log"
+TASK_NAME:
+  - TASK_NAME: INPUT_DF
+    TASK_KEY: FileRead
+    TASK_CATEGORY: input
+    TASK_VALUE:
+      TYPE: csv
+      PARAM:
+        - Key: path
+          value: "/Users/tamalsarkar/IdeaProjects/spark-datapipeline/config_param/input.csv"
+        - Key: Separator
+          value: ","
+    START_TS: CURRENT_TIMESTAMP
+    UPDATED_BY: TAMAL
+  - TASK_NAME: TABLE_DF
+    TASK_KEY: TableUnload
+    TASK_CATEGORY: DBRead
+    TASK_VALUE:
+      TYPE: postgresql
+      CONFIG_LOC: "/Users/tamalsarkar/IdeaProjects/spark-datapipeline/config_param/configDir/wfConfig.ini"
+      PARAM:
+        - Key: table
+          value: users
+    START_TS: CURRENT_TIMESTAMP
+    UPDATED_BY: TAMAL
+  - TASK_NAME: ACCOUNT_DF
+    TASK_KEY: TableUnload
+    TASK_CATEGORY: DBRead
+    TASK_VALUE:
+      TYPE: postgresql
+      CONFIG_LOC: "/Users/tamalsarkar/IdeaProjects/spark-datapipeline/config_param/configDir/wfConfig.ini"
+      PARAM:
+        - Key: query
+          value: "(select id,name,balance from accounts) as tbl1"
+    START_TS: CURRENT_TIMESTAMP
+    UPDATED_BY: TAMAL
+  - TASK_NAME: TRANSFORM_DF1
+    TASK_CATEGORY: transform
+    TASK_KEY: DataTransform
+    TASK_VALUE:
+      TYPE: sql
+      PARAM:
+        - Key: query
+          Value: SELECT id,firstname,lastname,address from INPUT_DF where id in (1,2,3)
+        - Key: Cache
+          Value: 'True'
+    START_TS: CURRENT_TIMESTAMP
+    UPDATED_BY: TAMAL
+  - TASK_NAME: TRANSFORM_DF2
+    TASK_CATEGORY: transform
+    TASK_KEY: DataTransform
+    TASK_VALUE:
+      TYPE: sql
+      PARAM:
+        - Key: query
+          Value: SELECT TRANSFORM_DF1.firstname,TRANSFORM_DF1.lastname,TABLE_DF.name,TABLE_DF.email,TABLE_DF.address
+            from TRANSFORM_DF1 INNER JOIN TABLE_DF ON TRANSFORM_DF1.id=TABLE_DF.id
+        - Key: Cache
+          Value: 'False'
+    START_TS: CURRENT_TIMESTAMP
+    UPDATED_BY: TAMAL
+  - TASK_NAME: TRANSFORM_DF3
+    TASK_CATEGORY: transform
+    TASK_KEY: DataTransform
+    TASK_VALUE:
+      TYPE: sql
+      PARAM:
+        - Key: query
+          Value: SELECT TRANSFORM_DF2.firstname,TRANSFORM_DF2.lastname,ACCOUNT_DF.name,ACCOUNT_DF.balance,TRANSFORM_DF2.email,TRANSFORM_DF2.address
+            from TRANSFORM_DF2 INNER JOIN ACCOUNT_DF ON TRANSFORM_DF2.name=ACCOUNT_DF.name
+        - Key: Cache
+          Value: 'False'
+    START_TS: CURRENT_TIMESTAMP
+    UPDATED_BY: TAMAL
+  - TASK_NAME: OUTPUT_DF
+    TASK_CATEGORY: output
+    TASK_KEY: FileWrite
+    TASK_VALUE:
+      TYPE: csv
+      INPUT: TRANSFORM_DF3
+      PARAM:
+        - Key: path
+          value: "/Users/tamalsarkar/IdeaProjects/spark-datapipeline/output"
+        - Key: header
+          value: 'True'
+        - Key: repartition
+          value: 1
+    START_TS: CURRENT_TIMESTAMP
+    UPDATED_BY: TAMAL
+  - TASK_NAME: TableWrite
+    TASK_KEY: tableLoad
+    TASK_CATEGORY: DBWrite
+    TASK_VALUE:
+      TYPE: postgresql
+      CONFIG_LOC: "/Users/tamalsarkar/IdeaProjects/spark-datapipeline/config_param/configDir/wfConfig.ini"
+      PARAM:
+        - Key: table
+          value: TRANSFORM_DF3
+    START_TS: CURRENT_TIMESTAMP
+    UPDATED_BY: TAMAL
+

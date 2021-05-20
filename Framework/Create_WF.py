@@ -1,5 +1,4 @@
-import datetime,json,sys
-
+import json,sys,os
 from pyspark import SparkConf,SparkContext
 from pyspark.sql import SQLContext
 
@@ -7,6 +6,7 @@ import inputTemplate
 import outputTemplate
 import logHandler
 import pgDbUtil
+import inputHandler
 
 def readJson(wfJSON):
     """
@@ -16,19 +16,19 @@ def readJson(wfJSON):
     :return: Successfully completed Task Project Name
     """
 
-    TASK_PROJECT= wfJSON['TASK_PROJECT']
-    WF_STATUS= wfJSON['WF_STATUS']
+    TASK_PROJECT = wfJSON['TASK_PROJECT']
+    WF_STATUS = wfJSON['WF_STATUS']
     if WF_STATUS == 'A':
-        wfSteps=wfJSON['TASK_NAME']
+        wfSteps = wfJSON['TASK_NAME']
         for steps in range(len(wfSteps)):
-            stepVal=wfSteps[steps]
+            stepVal = wfSteps[steps]
             logger.info(f'Current Step {stepVal}')
             if stepVal['TASK_CATEGORY'] == 'input':
-                filePath=stepVal['TASK_VALUE']['PARAM']
-                fileType=stepVal['TASK_VALUE']['TYPE']
+                filePath = stepVal['TASK_VALUE']['PARAM']
+                fileType = stepVal['TASK_VALUE']['TYPE']
                 logger.info(f'Input File Path with Arguments :{filePath} and file type is {fileType}')
                 try:
-                    dF1=inputTemplate.read_file(filePath,fileType)
+                    dF1 = inputTemplate.read_file(filePath,fileType)
                 except Exception as e :
                     logger.error(e)
                     exit(1)
@@ -37,28 +37,28 @@ def readJson(wfJSON):
                     logger.info(f'Successfully registered :{filePath} as a Temp Table')
                     logger.info("===========================================================")
             elif stepVal['TASK_CATEGORY'] == 'DBRead':
-                configLoc=stepVal['TASK_VALUE']['CONFIG_LOC']
-                dbType=stepVal['TASK_VALUE']['TYPE']
-                queryOp=stepVal['TASK_VALUE']['PARAM']
+                configLoc = stepVal['TASK_VALUE']['CONFIG_LOC']
+                dbType = stepVal['TASK_VALUE']['TYPE']
+                queryOp = stepVal['TASK_VALUE']['PARAM']
                 logger.info(f'DataBase Type :{dbType} and config file is {configLoc}')
                 logger.info(f"Query type and value : {queryOp[0]['Key']} -- {queryOp[0]['value']}")
                 logger.info("===========================================================")
                 try:
-                    dF3=pgDbUtil.tableUnload(configLoc,dbType,queryOp)
+                    dF3 = pgDbUtil.tableUnload(configLoc,dbType,queryOp)
                 except Exception as e :
                     logger.error(e)
                     exit (4)
                 else:
-                    stepVal['TASK_NAME']=dF3.createOrReplaceTempView(stepVal['TASK_NAME'])
+                    stepVal['TASK_NAME'] = dF3.createOrReplaceTempView(stepVal['TASK_NAME'])
             elif stepVal['TASK_CATEGORY'] == 'DBWrite':
-                configLoc=stepVal['TASK_VALUE']['CONFIG_LOC']
-                dbType=stepVal['TASK_VALUE']['TYPE']
-                queryOp=stepVal['TASK_VALUE']['PARAM']
+                configLoc = stepVal['TASK_VALUE']['CONFIG_LOC']
+                dbType = stepVal['TASK_VALUE']['TYPE']
+                queryOp = stepVal['TASK_VALUE']['PARAM']
                 logger.info(f'DataBase Type :{dbType} and config file is {configLoc}')
                 logger.info(f"Query type and value : {queryOp[0]['Key']} -- {queryOp[0]['value']}")
                 logger.info("===========================================================")
                 try:
-                    RCValue=pgDbUtil.tableLoad(configLoc,dbType,queryOp[0]['value'])
+                    RCValue = pgDbUtil.tableLoad(configLoc,dbType,queryOp[0]['value'])
                 except Exception as e :
                     logger.error(e)
                     exit (4)
@@ -83,7 +83,7 @@ def readJson(wfJSON):
                             stepVal['TASK_NAME']=dF2.createOrReplaceTempView(stepVal['TASK_NAME'])
                         else:
                             stepVal['TASK_NAME']=dF2.createOrReplaceTempView(stepVal['TASK_NAME'])
-                            spark.sql('CACHE TABLE TRANSFORM_DF1')
+                            dF2.cache()
                     except Exception as e:
                         logger.error(e)
                         exit(3)
@@ -125,8 +125,7 @@ def main():
         logger.info('Submitted Workflow JSON for processing. Please refer to log file for additional details')
         WF_NAME=readJson(wfJSON)
     except Exception as e:
-        logger.error(f'Please Correct the Input JSON and resubmit. Detailed Error Message below:'
-              f'{e}')
+        logger.error(f'Please Correct the Input JSON and resubmit. Detailed Error Message below:{e}')
     else:
         logger.info('Successfully Completed Workflow. Please refer to log file for additional details')
 
@@ -134,11 +133,23 @@ if __name__ == "__main__":
     sc = SparkContext.getOrCreate(SparkConf())
     spark = SQLContext(sc)
     try:
-        with open(sys.argv[1]) as inputJson:
-            wfJSON = json.load(inputJson)
+        if os.path.isfile(sys.argv[1]):
+            fileExtension = os.path.splitext(sys.argv[1])[1]
+            print(f'================ File Extension is {fileExtension} ==================')
+            if fileExtension == ".json":
+                with open(sys.argv[1]) as inputJson:
+                    wfJSON = json.load(inputJson)
+            elif fileExtension == ".yaml" or fileExtension == ".yml":
+                wfJSON = json.loads(inputHandler.convertInputArgs(sys.argv[1]))
+            else:
+                print('===File extension provided not supported yet.Work in progress to introduce support for xml ===')
+                exit(2)
+        else:
+            print('=========== Invalid input config file path/filename =============')
+            exit(3)
     except Exception as e:
-        print(f'Invalid Json Error {e}')
+        print(f' ============= Invalid Json Error {e} ===========')
     else:
-        logger=logHandler.MyLogger(wfJSON['LOG_LOCATION'])
+        logger = logHandler.MyLogger(wfJSON['LOG_LOCATION'])
         logger.info("Started parsing input workflow")
     main()
